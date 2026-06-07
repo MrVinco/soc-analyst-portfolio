@@ -137,80 +137,28 @@ C:\Windows\Temp\evil.exe
 
 ## Dashboards
 
+## Screenshots
+
 ### Authentication Overview Dashboard
 
-This dashboard monitors failed login activity.
-
-Panels included:
-
-Failed logins over time
-Top 10 accounts with failed logins
-Failed logins by source IP
-
-Screenshot:
-
-```text
-screenshots/dashboard-authentication-overview.png
-```
+![Authentication Overview Dashboard](screenshots/dashboard-authentication-overview.png)
 
 ### Process Execution Dashboard
 
-This dashboard monitors process creation activity from Sysmon EventCode 1.
-
-Panels included:
-
-Process creation over time
-Top parent child process pairs
-Suspicious command line flags
-
-Screenshot:
-
-```text
-screenshots/dashboard-process-execution.png
-```
+![Process Execution Dashboard](screenshots/dashboard-process-execution.png)
 
 ### Network Connections Dashboard
 
-This dashboard monitors Sysmon network and DNS activity.
-
-Panels included:
-
-Connections by process
-Connections on rare ports
-DNS queries by process
-Network connection count
-
-Screenshot:
-
-```text
-screenshots/dashboard-network-connections.png
-```
+![Network Connections Dashboard](screenshots/dashboard-network-connections.png)
 
 ### Windows SOC Detection Dashboard
 
-This dashboard brings the main detection evidence together in one SOC view.
+![Windows SOC Detection Dashboard](screenshots/dashboard-detection-rules.png)
 
-Panels included:
+### Detection Rules Summary
 
-Suspicious PowerShell Execution
-Brute Force Login Spike
-Suspicious Windows Service Creation
-Suspicious PowerShell Count
-Failed Login Count
-New Service Count
-Log Volume Over Time
-Recent Process Creation Events
+![Detection Rules Summary](screenshots/dashboard-detection-rules-summary.png)
 
-Screenshot:
-
-```text
-screenshots/dashboard-detection-rules.png
-```
-
-Cropped summary screenshot:
-
-```text
-screenshots/dashboard-detection-rules-summary.png
 ```
 
 ## Repository Structure
