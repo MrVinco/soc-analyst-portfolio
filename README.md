@@ -151,15 +151,14 @@ C:\Windows\Temp\evil.exe
 
 ![Network Connections Dashboard](screenshots/dashboard-network-connections.png)
 
-### Windows SOC Detection Dashboard
-
-![Windows SOC Detection Dashboard](screenshots/dashboard-detection-rules.png)
-
 ### Detection Rules Summary
 
 ![Detection Rules Summary](screenshots/dashboard-detection-rules-summary.png)
 
-```
+### Windows SOC Detection Dashboard
+
+![Windows SOC Detection Dashboard](screenshots/dashboard-detection-rules.png)
+
 
 ## Repository Structure
 
