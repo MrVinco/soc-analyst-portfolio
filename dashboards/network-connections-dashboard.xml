@@ -1,0 +1,109 @@
+<dashboard version="1.1" theme="light">
+  <label>Network Connections</label>
+  <row>
+    <panel>
+      <title>Connections by process</title>
+      <table>
+        <search>
+          <query>index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=3
+| eval process=coalesce(Image, process_name, "unknown_process")
+| eval dest_ip=coalesce(DestinationIp, dest_ip, "unknown_ip")
+| stats count by process, dest_ip
+| sort - count
+| head 15</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+          <refresh>5m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Connections on rare ports</title>
+      <table>
+        <search>
+          <query>index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=3
+| eval process=coalesce(Image, process_name, "unknown_process")
+| eval dest_ip=coalesce(DestinationIp, dest_ip, "unknown_ip")
+| eval dest_port=coalesce(DestinationPort, dest_port, "unknown_port")
+| where dest_port!="80" AND dest_port!="443" AND dest_port!="53"
+| table _time, EventCode, process, dest_ip, dest_port
+| sort - _time</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+          <refresh>5m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>DNS queries by process</title>
+      <table>
+        <search>
+          <query>index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=22
+| eval process=coalesce(Image, process_name, "unknown_process")
+| eval query_name=coalesce(QueryName, query, "unknown_query")
+| stats count by process, query_name
+| sort - count
+| head 20</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+          <refresh>5m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Network Connection Count</title>
+      <table>
+        <search>
+          <query>index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=3
+| stats count as network_connections</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>

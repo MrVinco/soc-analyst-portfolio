@@ -1,0 +1,306 @@
+<dashboard version="1.1" theme="light">
+  <label>Windows SOC Detection Dashboard</label>
+  <description>This dashboard monitors Windows Event Logs and Sysmon telemetry for suspicious PowerShell execution, brute force login activity, and suspicious Windows service creation.</description>
+  <row>
+    <panel>
+      <title>Total Sysmon Events</title>
+      <table>
+        <search>
+          <query>index=sysmon
+| stats count as total_events</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Log Volume Over Time</title>
+      <chart>
+        <search>
+          <query>index=sysmon
+| timechart span=5m count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Suspicious PowerShell Execution</title>
+      <table>
+        <title>Suspicious PowerShell</title>
+        <search>
+          <query>index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 "powershell"
+| eval process_path=coalesce(Image, process_name, "unknown_process")
+| eval command_line=coalesce(CommandLine, _raw)
+| eval parent_process=coalesce(ParentImage, parent_process_name, "unknown_parent")
+| eval command_line_lower=lower(command_line)
+| where like(command_line_lower, "%-enc%")
+   OR like(command_line_lower, "%-encodedcommand%")
+   OR like(command_line_lower, "%bypass%")
+   OR like(command_line_lower, "%downloadstring%")
+   OR like(command_line_lower, "%iex%")
+   OR like(command_line_lower, "%-nop%")
+| table _time, EventCode, process_path, command_line, parent_process
+| sort - _time</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Brute Force Login Spike</title>
+      <table>
+        <title>T1110.001 Password Guessing</title>
+        <search>
+          <query>index=sysmon source="WinEventLog:Security" "4625"
+| rex field=_raw "&lt;EventID[^&gt;]*&gt;(?&lt;EventCode&gt;\d+)&lt;/EventID&gt;"
+| rex field=_raw "&lt;Data Name=['\"]TargetUserName['\"]&gt;(?&lt;username&gt;[^&lt;]*)&lt;/Data&gt;"
+| rex field=_raw "&lt;Data Name=['\"]IpAddress['\"]&gt;(?&lt;source_ip&gt;[^&lt;]*)&lt;/Data&gt;"
+| where EventCode="4625"
+| eval username=if(isnull(username) OR username="", "unknown_user", username)
+| eval source_ip=if(isnull(source_ip) OR source_ip="" OR source_ip="-", "localhost", source_ip)
+| stats count as failed_attempts by username, source_ip
+| where failed_attempts &gt;= 5
+| table username, source_ip, failed_attempts
+| sort - failed_attempts</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Failed Login Attempts Over Time</title>
+      <chart>
+        <search>
+          <query>index=sysmon EventCode=4625
+| timechart span=5m count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Suspicious Windows Service Creation</title>
+      <table>
+        <title>MITRE: T1543.003 Windows Service</title>
+        <search>
+          <query>index=sysmon source="WinEventLog:System" "7045"
+| rex field=_raw "&lt;EventID[^&gt;]*&gt;(?&lt;EventCode&gt;\d+)&lt;/EventID&gt;"
+| rex field=_raw "&lt;Data Name=['\"]ServiceName['\"]&gt;(?&lt;service_name_xml&gt;[^&lt;]*)&lt;/Data&gt;"
+| rex field=_raw "&lt;Data Name=['\"]ImagePath['\"]&gt;(?&lt;service_path_xml&gt;[^&lt;]*)&lt;/Data&gt;"
+| rex field=_raw "Service Name:\s+(?&lt;service_name_text&gt;[^\r\n]+)"
+| rex field=_raw "Service File Name:\s+(?&lt;service_path_text&gt;[^\r\n]+)"
+| eval service_name=coalesce(service_name_xml, service_name_text, ServiceName, Service_Name, "unknown_service")
+| eval service_path=coalesce(service_path_xml, service_path_text, ImagePath, ServiceFileName, Service_File_Name, "unknown_path")
+| where EventCode="7045"
+| where like(service_path, "%cmd.exe%")
+   OR like(service_path, "%powershell%")
+   OR like(service_path, "%\\Temp\\%")
+   OR like(service_path, "%AppData%")
+| table _time, EventCode, service_name, service_path
+| sort - _time</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Recent Process Creation Events</title>
+      <table>
+        <search>
+          <query>index=sysmon EventCode=1
+| eval process=coalesce(process_name, Image)
+| eval parent_process=coalesce(parent_process_name, ParentImage)
+| table _time, user, User, process, CommandLine, parent_process
+| sort - _time
+| head 20</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Suspicious PowerShell count:</title>
+      <single>
+        <search>
+          <query>index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 "powershell"
+| eval command_line=coalesce(CommandLine, _raw)
+| eval command_line_lower=lower(command_line)
+| where like(command_line_lower, "%-enc%")
+   OR like(command_line_lower, "%-encodedcommand%")
+   OR like(command_line_lower, "%bypass%")
+   OR like(command_line_lower, "%downloadstring%")
+   OR like(command_line_lower, "%iex%")
+   OR like(command_line_lower, "%-nop%")
+| stats count as suspicious_powershell_events</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Failed login count:</title>
+      <table>
+        <search>
+          <query>index=sysmon EventCode=4625
+| stats count as failed_logins</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>New service count:</title>
+      <single>
+        <title>New Service Count</title>
+        <search>
+          <query>index=sysmon source="WinEventLog:System" "7045"
+| rex field=_raw "&lt;EventID[^&gt;]*&gt;(?&lt;EventCode&gt;\d+)&lt;/EventID&gt;"
+| where EventCode="7045"
+| stats count as new_services_created</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+      </single>
+    </panel>
+  </row>
+</dashboard>

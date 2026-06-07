@@ -1,0 +1,15 @@
+index=sysmon source="WinEventLog:System" "7045"
+| rex field=_raw "<EventID[^>]*>(?<EventCode>\d+)</EventID>"
+| rex field=_raw "<Data Name=['\"]ServiceName['\"]>(?<service_name_xml>[^<]*)</Data>"
+| rex field=_raw "<Data Name=['\"]ImagePath['\"]>(?<service_path_xml>[^<]*)</Data>"
+| rex field=_raw "Service Name:\s+(?<service_name_text>[^\r\n]+)"
+| rex field=_raw "Service File Name:\s+(?<service_path_text>[^\r\n]+)"
+| eval service_name=coalesce(service_name_xml, service_name_text, ServiceName, Service_Name, "unknown_service")
+| eval service_path=coalesce(service_path_xml, service_path_text, ImagePath, ServiceFileName, Service_File_Name, "unknown_path")
+| where EventCode="7045"
+| where like(service_path, "%cmd.exe%")
+   OR like(service_path, "%powershell%")
+   OR like(service_path, "%\\Temp\\%")
+   OR like(service_path, "%AppData%")
+| table _time, EventCode, service_name, service_path
+| sort - _time

@@ -1,0 +1,73 @@
+<dashboard version="1.1" theme="light">
+  <label>Process Execution</label>
+  <row>
+    <panel>
+      <title>Process creation over time</title>
+      <chart>
+        <search>
+          <query>index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+| timechart span=30m count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Top parent child process pairs</title>
+      <table>
+        <search>
+          <query>index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+| eval parent_process=coalesce(ParentImage, parent_process_name, "unknown_parent")
+| eval process=coalesce(Image, process_name, "unknown_process")
+| stats count by parent_process, process
+| sort - count
+| head 15</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Suspicious command line flags</title>
+      <table>
+        <search>
+          <query>index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+| eval process_path=coalesce(Image, process_name, "unknown_process")
+| eval command_line=coalesce(CommandLine, _raw)
+| eval command_line_lower=lower(command_line)
+| where like(command_line_lower, "%base64%")
+   OR like(command_line_lower, "%-enc%")
+   OR like(command_line_lower, "%encodedcommand%")
+   OR like(command_line_lower, "%bypass%")
+   OR like(command_line_lower, "%-nop%")
+   OR like(command_line_lower, "%downloadstring%")
+   OR like(command_line_lower, "%iex%")
+| where NOT like(lower(process_path), "%splunk%")
+| table _time, EventCode, process_path, command_line
+| sort - _time</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>

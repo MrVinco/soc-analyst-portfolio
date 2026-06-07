@@ -1,0 +1,75 @@
+<dashboard version="1.1" theme="light">
+  <label>Authentication Overview</label>
+  <row>
+    <panel>
+      <title>Failed logins over time</title>
+      <chart>
+        <title>Failed logins over time</title>
+        <search>
+          <query>index=sysmon source="WinEventLog:Security" "4625"
+| rex field=_raw "&lt;EventID[^&gt;]*&gt;(?&lt;EventCode&gt;\d+)&lt;/EventID&gt;"
+| rex field=_raw "&lt;Data Name=['\"]TargetUserName['\"]&gt;(?&lt;username&gt;[^&lt;]*)&lt;/Data&gt;"
+| where EventCode="4625"
+| eval username=if(isnull(username) OR username="", "unknown_user", username)
+| timechart span=1h count by username</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Top 10 accounts with failed logins</title>
+      <chart>
+        <title>Top 10 accounts with failed logins</title>
+        <search>
+          <query>index=sysmon source="WinEventLog:Security" "4625"
+| rex field=_raw "&lt;EventID[^&gt;]*&gt;(?&lt;EventCode&gt;\d+)&lt;/EventID&gt;"
+| rex field=_raw "&lt;Data Name=['\"]TargetUserName['\"]&gt;(?&lt;username&gt;[^&lt;]*)&lt;/Data&gt;"
+| where EventCode="4625"
+| eval username=if(isnull(username) OR username="", "unknown_user", username)
+| stats count by username
+| sort - count
+| head 10</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.drilldown">none</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Failed logins by source IP</title>
+      <table>
+        <search>
+          <query>index=sysmon source="WinEventLog:Security" "4625"
+| rex field=_raw "&lt;EventID[^&gt;]*&gt;(?&lt;EventCode&gt;\d+)&lt;/EventID&gt;"
+| rex field=_raw "&lt;Data Name=['\"]TargetUserName['\"]&gt;(?&lt;username&gt;[^&lt;]*)&lt;/Data&gt;"
+| rex field=_raw "&lt;Data Name=['\"]IpAddress['\"]&gt;(?&lt;source_ip&gt;[^&lt;]*)&lt;/Data&gt;"
+| where EventCode="4625"
+| eval username=if(isnull(username) OR username="", "unknown_user", username)
+| eval source_ip=if(isnull(source_ip) OR source_ip="" OR source_ip="-", "localhost", source_ip)
+| stats count by source_ip, username
+| sort - count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>

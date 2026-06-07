@@ -1,0 +1,13 @@
+index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 "powershell"
+| eval process_path=coalesce(Image, process_name, "unknown_process")
+| eval command_line=coalesce(CommandLine, _raw)
+| eval parent_process=coalesce(ParentImage, parent_process_name, "unknown_parent")
+| eval command_line_lower=lower(command_line)
+| where like(command_line_lower, "%-enc%")
+   OR like(command_line_lower, "%-encodedcommand%")
+   OR like(command_line_lower, "%bypass%")
+   OR like(command_line_lower, "%downloadstring%")
+   OR like(command_line_lower, "%iex%")
+   OR like(command_line_lower, "%-nop%")
+| table _time, EventCode, process_path, command_line, parent_process
+| sort - _time
