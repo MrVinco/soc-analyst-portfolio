@@ -33,6 +33,8 @@ A detailed setup guide is available here:
 
 [Lab Setup Documentation](docs/lab-setup.md)
 
+The setup guide documents the VirtualBox Windows 10 VM, Splunk Enterprise setup, Sysmon deployment, Windows Event Log ingestion, source verification, and dashboard creation process.
+
 
 ## Data Sources
 
