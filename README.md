@@ -26,6 +26,14 @@ MITRE ATT&CK mapping
 | Windows System Log   | Source for Windows service installation events                                                  |
 | MITRE ATT&CK         | Framework used to map detections to attacker techniques                                         |
 
+
+## Lab Setup Documentation
+
+A detailed setup guide is available here:
+
+[Lab Setup Documentation](docs/lab-setup.md)
+
+
 ## Data Sources
 
 The lab ingests logs into a custom Splunk index named:
