@@ -1,0 +1,12 @@
+index=sysmon source="WinEventLog:Security" earliest=-24h ("4625" OR "testuser1")
+| rex field=_raw "EventCode=(?<EventCode>\d+)"
+| rex field=_raw "(?s)Account For Which Logon Failed:.*?Account Name:\s+(?<username>[^\r\n]+)"
+| where EventCode="4625"
+| eval username=trim(username)
+| bucket _time span=5m
+| stats count as failed_attempts by _time, username
+| where failed_attempts >= 5
+| eval attack_type="Password Guessing"
+| eval mitre="T1110.001"
+| table _time, username, failed_attempts, attack_type, mitre
+| sort - failed_attempts

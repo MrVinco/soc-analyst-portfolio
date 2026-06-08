@@ -1,0 +1,16 @@
+index=sysmon source="WinEventLog:Security" earliest=-24h ("4625" OR "4624" OR "testuser2")
+| rex field=_raw "EventCode=(?<EventCode>\d+)"
+| rex field=_raw "(?s)Account For Which Logon Failed:.*?Account Name:\s+(?<failed_user>[^\r\n]+)"
+| rex field=_raw "(?s)New Logon:.*?Account Name:\s+(?<success_user>[^\r\n]+)"
+| eval username=coalesce(failed_user, success_user)
+| eval username=trim(username)
+| where username="testuser2"
+| eval failure=if(EventCode="4625",1,0)
+| eval success=if(EventCode="4624",1,0)
+| bucket _time span=30m
+| stats sum(failure) as failures, sum(success) as successes by _time, username
+| where failures >= 2 AND successes >= 1
+| eval attack_type="Credential Stuffing"
+| eval mitre="T1110.004"
+| table _time, username, failures, successes, attack_type, mitre
+| sort - _time

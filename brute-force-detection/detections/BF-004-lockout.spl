@@ -1,0 +1,11 @@
+index=sysmon source="WinEventLog:Security" earliest=-24h ("4740" OR "testuser1")
+| rex field=_raw "EventCode=(?<EventCode>\d+)"
+| rex field=_raw "(?s)Account That Was Locked Out:.*?Account Name:\s+(?<username>[^\r\n]+)"
+| rex field=_raw "Caller Computer Name:\s+(?<caller_computer>[^\r\n]+)"
+| where EventCode="4740"
+| eval username=trim(username)
+| eval caller_computer=if(isnull(caller_computer) OR caller_computer="", "localhost", caller_computer)
+| eval attack_type="Account Lockout"
+| eval mitre="T1110.001"
+| table _time, username, caller_computer, attack_type, mitre
+| sort - _time

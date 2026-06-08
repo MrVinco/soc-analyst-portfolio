@@ -1,0 +1,14 @@
+index=sysmon source="WinEventLog:Security" earliest=-24h ("4625" OR "testuser1" OR "testuser2" OR "testuser3")
+| rex field=_raw "EventCode=(?<EventCode>\d+)"
+| rex field=_raw "(?s)Account For Which Logon Failed:.*?Account Name:\s+(?<username>[^\r\n]+)"
+| rex field=_raw "Source Network Address:\s+(?<source_ip>[^\r\n]+)"
+| where EventCode="4625"
+| eval username=trim(username)
+| eval source_ip=if(isnull(source_ip) OR source_ip="-" OR source_ip="", "localhost", source_ip)
+| bucket _time span=10m
+| stats dc(username) as unique_users, count as failed_attempts, values(username) as targeted_users by _time, source_ip
+| where unique_users >= 3
+| eval attack_type="Password Spray"
+| eval mitre="T1110.003"
+| table _time, source_ip, unique_users, failed_attempts, targeted_users, attack_type, mitre
+| sort - unique_users
