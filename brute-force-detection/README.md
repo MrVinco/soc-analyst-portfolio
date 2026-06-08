@@ -13,9 +13,6 @@ Account lockout
 
 The detections were built in a Windows SOC home lab using Splunk Enterprise, Windows Security Event Logs, and local Windows test accounts.
 
-## Additional Projects
-
-- [Brute Force and Credential Attack Detection](brute-force-detection/)
 
 ## Lab Environment
 

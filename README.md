@@ -15,6 +15,12 @@ Suspicious Windows service creation detection
 Dashboard reporting
 MITRE ATT&CK mapping
 
+
+## Additional Projects
+
+- [Brute Force and Credential Attack Detection](brute-force-detection/)
+
+
 ## Lab Environment
 
 | Component            | Purpose                                                                                         |
