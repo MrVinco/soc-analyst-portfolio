@@ -1,0 +1,8 @@
+report_id,ioc_type,value_defanged,verdict,confidence,first_seen,source,mitre,notes
+PA-2026-001,ip,103.9.171[.]10,suspicious,medium,3/18/2021,BTLO email header,T1566,Originating IP found during raw header inspection
+PA-2026-001,ip,91.90.123[.]43,suspicious,medium,3/18/2021,X-PHP-Script header,T1566,Remote address from website form submission
+PA-2026-001,hostname,c5s2-1e-syd[.]hosting-services[.]net[.]au,suspicious,medium,3/18/2021,Received header,T1566,Sending host and reverse DNS result
+PA-2026-001,domain,markgardner[.]com[.]au,suspicious,medium,3/18/2021,X-PHP-Script header,T1566,Website contact form source
+PA-2026-001,url,hxxps://35000usdperwwekpodf[.]blogspot[.]sg?p=9swghxxps://35000usdperwwekpodf[.]blogspot[.]co[.]il?o=0hnd,suspicious,high,3/18/2021,Email body,T1566.002,Suspicious Blogspot URL found inside attached email
+PA-2026-001,domain,35000usdperwwekpodf[.]blogspot[.]sg,suspicious,high,3/18/2021,Email body,T1566.002,Suspicious Blogspot domain
+PA-2026-001,domain,35000usdperwwekpodf[.]blogspot[.]co[.]il,suspicious,high,3/18/2021,Email body,T1566.002,Suspicious Blogspot domain
