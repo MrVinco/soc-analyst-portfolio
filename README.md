@@ -19,6 +19,9 @@ MITRE ATT&CK mapping
 ## Additional Projects
 
 - [Brute Force and Credential Attack Detection](brute-force-detection/)
+* [Phishing Email Analysis Portfolio](phishing-analysis/)
+  Public safe phishing analysis project documenting `.eml` review, raw header inspection, IOC extraction, URL defanging, URL2PNG previewing, and MITRE ATT&CK mapping.
+
 
 
 ## Lab Environment
