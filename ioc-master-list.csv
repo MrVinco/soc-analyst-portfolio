@@ -1,0 +1,14 @@
+project_id,project_name,ioc_type,value_defanged,verdict,confidence,source,mitre,notes
+SOC-001,SOC Home Lab with Splunk Sysmon and Windows Logs,behavior,Suspicious PowerShell execution,suspicious,medium,Windows and Sysmon logs,T1059.001,Detection rule created for suspicious PowerShell activity
+SOC-001,SOC Home Lab with Splunk Sysmon and Windows Logs,behavior,Multiple failed login attempts,suspicious,medium,Windows Security logs,T1110.001,Detection rule created for possible password guessing activity
+SOC-001,SOC Home Lab with Splunk Sysmon and Windows Logs,behavior,Suspicious Windows service creation,suspicious,medium,Sysmon and Windows logs,T1543.003,Detection rule created for suspicious service creation
+BF-001,Brute Force and Credential Attack Detection,username,testuser1,lab-only,high,Windows Security logs,T1110.001,Lab account used during password guessing simulation
+BF-002,Brute Force and Credential Attack Detection,username,testuser1 testuser2 testuser3,lab-only,high,Windows Security logs,T1110.003,Lab accounts used during password spraying simulation
+BF-003,Brute Force and Credential Attack Detection,username,testuser2,lab-only,high,Windows Security logs,T1110.004,Lab account observed during credential stuffing simulation
+PA-001,Phishing Email Analysis Portfolio,artifact,redacted-phishing-email-artifact,withheld-public,high,Sanitized phishing analysis,T1566.001,Public version intentionally redacts active challenge details
+PA-001,Phishing Email Analysis Portfolio,url,redacted-suspicious-url,withheld-public,high,Sanitized phishing analysis,T1566.002,URL was defanged and reviewed safely but exact value is withheld publicly
+NF-2026-001,Network Traffic Analysis with Wireshark,internal_ip,10.2.28[.]88,compromised,high,PCAP endpoint analysis,T1071.001,Primary internal host generating repeated suspicious HTTP POST traffic
+NF-2026-001,Network Traffic Analysis with Wireshark,ip,45.131.214[.]85,malicious,high,HTTP POST traffic,T1071.001,External C2 destination contacted repeatedly
+NF-2026-001,Network Traffic Analysis with Wireshark,url,hxxp://45.131.214[.]85/fakeurl.htm,malicious,high,HTTP request URI,T1071.001,Repeated HTTP POST C2 endpoint
+NF-2026-001,Network Traffic Analysis with Wireshark,user_agent,NetSupport Manager/1.3,suspicious,high,HTTP header,T1219,Remote access software User-Agent observed in repeated traffic
+NF-2026-001,Network Traffic Analysis with Wireshark,uri,/fakeurl.htm,suspicious,high,HTTP POST URI,T1071.001,Repeated suspicious URI used for C2 polling
