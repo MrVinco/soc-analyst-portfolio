@@ -24,8 +24,7 @@ The goal of this portfolio is to demonstrate practical blue team skills through 
 | 2   | [Brute Force and Credential Attack Detection](brute-force-detection/)   | Password guessing, password spraying, credential stuffing, and account lockout detection              |
 | 3   | [Phishing Email Analysis Portfolio](phishing-analysis/)                 | `.eml` review, email header analysis, IOC extraction, URL defanging, and MITRE ATT&CK mapping         |
 | 4   | [Network Traffic Analysis with Wireshark](wireshark-network-forensics/) | PCAP analysis, HTTP C2 beaconing, TShark, TCP stream review, IOC extraction, and MITRE ATT&CK mapping |
-
-| 5 | [Vulnerability Assessment and Remediation Report](vulnerability-assessment-report/) | Nessus Essentials scan, CVSS-based prioritization, vulnerability reporting, remediation planning, and evidence documentation |
+| 5   | [Vulnerability Assessment and Remediation Report](vulnerability-assessment-report/) | Nessus Essentials scan, CVSS-based prioritization, vulnerability reporting, remediation planning, and evidence documentation |
 
 
 ## MITRE ATT&CK Coverage
