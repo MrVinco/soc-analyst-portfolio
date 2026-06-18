@@ -25,6 +25,9 @@ The goal of this portfolio is to demonstrate practical blue team skills through 
 | 3   | [Phishing Email Analysis Portfolio](phishing-analysis/)                 | `.eml` review, email header analysis, IOC extraction, URL defanging, and MITRE ATT&CK mapping         |
 | 4   | [Network Traffic Analysis with Wireshark](wireshark-network-forensics/) | PCAP analysis, HTTP C2 beaconing, TShark, TCP stream review, IOC extraction, and MITRE ATT&CK mapping |
 
+| 5 | [Vulnerability Assessment and Remediation Report](vulnerability-assessment-report/) | Nessus Essentials scan, CVSS-based prioritization, vulnerability reporting, remediation planning, and evidence documentation |
+
+
 ## MITRE ATT&CK Coverage
 
 | Project                                            | Technique ID | Technique Name           | What Was Detected / Analyzed                                            |
@@ -40,6 +43,14 @@ The goal of this portfolio is to demonstrate practical blue team skills through 
 | Network Traffic Analysis with Wireshark            | T1071.001    | Web Protocols            | HTTP POST traffic used for suspicious command-and-control communication |
 | Network Traffic Analysis with Wireshark            | T1219        | Remote Access Software   | NetSupport Manager User-Agent observed in suspicious network traffic    |
 | Network Traffic Analysis with Wireshark            | T1105        | Ingress Tool Transfer    | Possible tool transfer behavior reviewed during traffic analysis        |
+
+
+| Vulnerability Assessment and Remediation Report | T1595 | Active Scanning | Nessus Essentials was used to perform vulnerability discovery against an isolated lab target |
+| Vulnerability Assessment and Remediation Report | T1046 | Network Service Discovery | Exposed services and ports were identified during vulnerability assessment |
+| Vulnerability Assessment and Remediation Report | T1190 | Exploit Public-Facing Application | Findings included exposed vulnerable services that could be exploited if placed in a real environment |
+
+| Vulnerability Assessment and Remediation Report | Completed |
+
 
 ## Skills Demonstrated
 

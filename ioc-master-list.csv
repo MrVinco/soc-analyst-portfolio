@@ -12,3 +12,9 @@ NF-2026-001,Network Traffic Analysis with Wireshark,ip,45.131.214[.]85,malicious
 NF-2026-001,Network Traffic Analysis with Wireshark,url,hxxp://45.131.214[.]85/fakeurl.htm,malicious,high,HTTP request URI,T1071.001,Repeated HTTP POST C2 endpoint
 NF-2026-001,Network Traffic Analysis with Wireshark,user_agent,NetSupport Manager/1.3,suspicious,high,HTTP header,T1219,Remote access software User-Agent observed in repeated traffic
 NF-2026-001,Network Traffic Analysis with Wireshark,uri,/fakeurl.htm,suspicious,high,HTTP POST URI,T1071.001,Repeated suspicious URI used for C2 polling
+
+VA-2026-001,Vulnerability Assessment and Remediation Report,host,192.168.56[.]101,lab-only,high,Nessus vulnerability scan,T1595,Metasploitable 2 lab target scanned in isolated host-only network
+VA-2026-001,Vulnerability Assessment and Remediation Report,service,VNC on 5900/tcp,critical,high,Nessus finding,T1046,Weak VNC password detected during vulnerability scan
+VA-2026-001,Vulnerability Assessment and Remediation Report,service,Bind shell on 1524/tcp,critical,high,Nessus finding,T1190,Bind shell backdoor detected on Metasploitable lab target
+VA-2026-001,Vulnerability Assessment and Remediation Report,service,rlogin on 513/tcp,high,medium,Nessus finding,T1046,Insecure rlogin service detected
+VA-2026-001,Vulnerability Assessment and Remediation Report,service,Samba on 445/tcp,high,medium,Nessus finding,T1046,Samba Badlock vulnerability detected
