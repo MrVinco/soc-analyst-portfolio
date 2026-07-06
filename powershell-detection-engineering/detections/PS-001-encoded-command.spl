@@ -1,0 +1,24 @@
+# PS-001: Encoded PowerShell Command Execution
+
+# Project: Suspicious PowerShell Detection Engineering
+
+# MITRE ATT&CK: T1059.001 - PowerShell
+
+# Severity: High
+
+# Description: Detects PowerShell script block events containing encoded command execution patterns or suspicious execution flags.
+
+index=main source="WinEventLog:Microsoft-Windows-PowerShell/Operational" EventCode=4104
+| eval script=lower(_raw)
+| where like(script,"%encodedcommand%")
+OR like(script,"%-encodedcommand%")
+OR like(script,"%-enc %")
+OR like(script,"% -e %")
+OR like(script,"%-noprofile%")
+OR like(script,"%-noninteractive%")
+OR like(script,"%windowstyle hidden%")
+| eval detection="PS-001: Encoded PowerShell Command Execution"
+| eval mitre="T1059.001"
+| eval severity="High"
+| table _time host user EventCode detection mitre severity _raw
+| sort -_time

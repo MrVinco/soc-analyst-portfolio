@@ -1,0 +1,33 @@
+# PS-002: Download Cradle / Fileless Execution
+
+# Project: Suspicious PowerShell Detection Engineering
+
+# MITRE ATT&CK:
+
+# - T1059.001 - PowerShell
+
+# - T1105 - Ingress Tool Transfer
+
+# Severity: Critical
+
+# Description: Detects PowerShell script block events containing IEX or Invoke-Expression combined with download functions such as DownloadString, DownloadFile, WebClient, or Invoke-WebRequest.
+
+index=main source="WinEventLog:Microsoft-Windows-PowerShell/Operational" EventCode=4104
+| eval script=lower(_raw)
+| where (
+like(script,"%iex%")
+OR like(script,"%invoke-expression%")
+)
+AND (
+like(script,"%downloadstring%")
+OR like(script,"%downloadfile%")
+OR like(script,"%webclient%")
+OR like(script,"%net.webclient%")
+OR like(script,"%invoke-webrequest%")
+OR like(script,"%iwr%")
+)
+| eval detection="PS-002: Download Cradle / Fileless Execution"
+| eval mitre="T1059.001, T1105"
+| eval severity="Critical"
+| table _time host user EventCode detection mitre severity _raw
+| sort -_time

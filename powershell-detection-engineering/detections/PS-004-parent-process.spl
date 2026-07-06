@@ -1,0 +1,28 @@
+# PS-004: Suspicious Parent Process Spawning PowerShell
+
+# Project: Suspicious PowerShell Detection Engineering
+
+# MITRE ATT&CK: T1059.001 - PowerShell
+
+# Severity: Critical
+
+# Description: Detects suspicious parent-child process relationships where script hosts, Office applications, or command shells spawn PowerShell.
+
+index=sysmon source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+| eval event=lower(_raw)
+| where like(event,"%powershell.exe%")
+AND (
+like(event,"%cmd.exe%")
+OR like(event,"%wscript.exe%")
+OR like(event,"%cscript.exe%")
+OR like(event,"%mshta.exe%")
+OR like(event,"%winword.exe%")
+OR like(event,"%excel.exe%")
+OR like(event,"%outlook.exe%")
+OR like(event,"%powerpnt.exe%")
+)
+| eval detection="PS-004: Suspicious Parent Process Spawning PowerShell"
+| eval mitre="T1059.001"
+| eval severity="Critical"
+| table _time host EventCode detection mitre severity _raw
+| sort -_time

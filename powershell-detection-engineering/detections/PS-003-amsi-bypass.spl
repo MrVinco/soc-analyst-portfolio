@@ -1,0 +1,24 @@
+# PS-003: AMSI Bypass Attempt or Defender Block
+
+# Project: Suspicious PowerShell Detection Engineering
+
+# MITRE ATT&CK: T1562.001 - Impair Defenses: Disable or Modify Tools
+
+# Severity: Critical
+
+# Description: Detects AMSI bypass related strings in PowerShell logs or Defender events where AMSI-related PowerShell activity was blocked before execution.
+
+(
+index=main source="WinEventLog:Microsoft-Windows-PowerShell/Operational" EventCode=4104
+("amsiutils" OR "amsiinitfailed" OR "amsicontext" OR "amsi.dll" OR "runtime.interopservices.marshal" OR "writeint32")
+)
+OR
+(
+index=main source="WinEventLog:Microsoft-Windows-Windows Defender/Operational"
+("HackTool:PowerShell" OR "PsAttack" OR "potentially unwanted software" OR "malware" OR "detected" OR "remediation")
+)
+| eval detection="PS-003: AMSI Bypass Attempt or Defender Block"
+| eval mitre="T1562.001"
+| eval severity="Critical"
+| table _time host source sourcetype EventCode detection mitre severity _raw
+| sort -_time

@@ -25,6 +25,7 @@ The goal of this portfolio is to demonstrate practical blue team skills through 
 | 3   | [Phishing Email Analysis Portfolio](phishing-analysis/)                 | `.eml` review, email header analysis, IOC extraction, URL defanging, and MITRE ATT&CK mapping         |
 | 4   | [Network Traffic Analysis with Wireshark](wireshark-network-forensics/) | PCAP analysis, HTTP C2 beaconing, TShark, TCP stream review, IOC extraction, and MITRE ATT&CK mapping |
 | 5   | [Vulnerability Assessment and Remediation Report](vulnerability-assessment-report/) | Nessus Essentials scan, CVSS-based prioritization, vulnerability reporting, remediation planning, and evidence documentation |
+| 6   | [Suspicious PowerShell Detection Engineering](powershell-detection-engineering/) | PowerShell logging, safe attack simulation, Splunk SPL detections, Sysmon analysis, Defender events, MITRE ATT&CK mapping, and SOC playbook writing |
 
 
 ## MITRE ATT&CK Coverage
@@ -46,6 +47,10 @@ The goal of this portfolio is to demonstrate practical blue team skills through 
 | Vulnerability Assessment and Remediation Report | T1046 | Network Service Discovery | Exposed services and ports were identified during vulnerability assessment |
 | Vulnerability Assessment and Remediation Report | T1190 | Exploit Public-Facing Application | Findings included exposed vulnerable services that could be exploited if placed in a real environment |
 | Vulnerability Assessment and Remediation Report | Completed |
+| Suspicious PowerShell Detection Engineering | T1059.001 | PowerShell | Encoded commands, download cradle behavior, suspicious parent process execution, and PowerShell-based activity |
+| Suspicious PowerShell Detection Engineering | T1105 | Ingress Tool Transfer | Download cradle pattern using IEX and DownloadString |
+| Suspicious PowerShell Detection Engineering | T1562.001 | Impair Defenses: Disable or Modify Tools | AMSI-related simulation blocked by Windows Defender |
+| Suspicious PowerShell Detection Engineering | T1218 | System Binary Proxy Execution | LOLBin invocation through PowerShell using certutil.exe |
 
 
 ## Skills Demonstrated
@@ -134,6 +139,7 @@ Only reports, screenshots, detection files, IOC summaries, commands, filters, an
 | Brute Force and Credential Attack Detection        | Completed |
 | Phishing Email Analysis Portfolio                  | Completed |
 | Network Traffic Analysis with Wireshark            | Completed |
+| Suspicious PowerShell Detection Engineering        | Completed |
 
 ## Future Portfolio Expansion
 
